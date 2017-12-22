@@ -4,15 +4,19 @@ import java.util.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 @Entity
 public class Room {
 	
 	private long id;
     private String name;
-	private List<Table> tables;
+	private Set<Table> tables;
 	
 	
 	public Room() {
@@ -49,14 +53,19 @@ public class Room {
 		this.name = name;
 	}
 
-	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL, 
-	        orphanRemoval = true)
-	public List<Table> getTables() {
+	@ManyToMany(fetch=FetchType.EAGER,cascade=CascadeType.ALL)
+    @JoinTable(name="Room_Table",
+        joinColumns=
+            @JoinColumn(name="roomid", referencedColumnName="id"),
+        inverseJoinColumns=
+            @JoinColumn(name="id", referencedColumnName="id")
+        )
+	public Set<Table> getTables() {
 		return tables;
 	}
 
 
-	public void setTables(List<Table> tables) {
+	public void setTables(Set<Table> tables) {
 		this.tables = tables;
 	}
 	

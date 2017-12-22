@@ -9,6 +9,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -18,19 +20,19 @@ public class Table {
 
 	
 	private long id;
-	private Set<Users> users;
+	private List<Users> users;
 	private String name;
 	
-	@JsonIgnore
-	private Room room;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="room_id")	
-	public Room getRoom() {
+	private Set<Room> room;
+	
+	@JsonIgnore
+	@ManyToMany(fetch=FetchType.EAGER,mappedBy="tables")
+	public Set<Room> getRoom() {
 		return room;
 	}
 
-	public void setRoom(Room room) {
+	public void setRoom(Set<Room> room) {
 		this.room = room;
 	}
 
@@ -59,12 +61,18 @@ public class Table {
 		this.name = name;
 	}
 	
-	@OneToMany(mappedBy="table")
-	public Set<Users> getUsers() {
+	@ManyToMany(fetch=FetchType.EAGER,cascade=CascadeType.ALL)
+    @JoinTable(name="Table_Users",
+        joinColumns=
+            @JoinColumn(name="roomid", referencedColumnName="id"),
+        inverseJoinColumns=
+            @JoinColumn(name="userid", referencedColumnName="userId")
+        )
+	public List<Users> getUsers() {
 		return users;
 	}
 
-	public void setUsers(Set<Users> users) {
+	public void setUsers(List<Users> users) {
 		this.users = users;
 	}
 	

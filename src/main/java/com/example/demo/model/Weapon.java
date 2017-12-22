@@ -1,14 +1,19 @@
 package com.example.demo.model;
 
+import java.util.List;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class Weapon 
@@ -17,8 +22,8 @@ public class Weapon
 	private long id;	
 	private String name;
 	
-    @JsonIgnore
-    private Users user;
+   @JsonIgnore
+    private Set<Users> users;
 	
 
 	@Id	
@@ -36,13 +41,13 @@ public class Weapon
 		this.name = name;
 	}
 
-	@ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinColumn(name="user_Id")
-	public Users getUser() {
-		return user;
+	@JsonIgnore
+	@ManyToMany(fetch=FetchType.EAGER,mappedBy="weapons")
+	public Set<Users> getUser() {
+		return users;
 	}
-	public void setUser(Users user) {
-		this.user = user;
+	public void setUser(Set<Users> user) {
+		this.users = user;
 	}
 	
 }

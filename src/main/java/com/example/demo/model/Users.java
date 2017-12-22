@@ -9,6 +9,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -32,21 +34,21 @@ public class Users {
 	private Integer salary;
 	
 	
-	private List<Weapon> weapons;
+	private Set<Weapon> weapons;
 	
 	
 	
-	private Table table;
+	private Set<Table> tables;
 	
+
 	@JsonIgnore
-	@ManyToOne(fetch=FetchType.LAZY,cascade = CascadeType.MERGE)
-    @JoinColumn(name="table")
-	public Table getTable() {
-		return table;
+	@ManyToMany(fetch=FetchType.EAGER,mappedBy="users")
+	public Set<Table> getTable() {
+		return tables;
 	}
 
-	public void setTable(Table table) {
-		this.table = table;
+	public void setTable(Set<Table> table) {
+		this.tables = table;
 	}
 
 	public Users() {
@@ -108,13 +110,18 @@ public class Users {
 		this.team = team;
 	}
 
-	@OneToMany(mappedBy= "user",cascade = CascadeType.ALL, 
-	        orphanRemoval = true)
-	public List<Weapon> getWeapons() {
+	@ManyToMany(fetch=FetchType.EAGER,cascade=CascadeType.ALL)
+    @JoinTable(name="User_Weapon",
+        joinColumns=
+            @JoinColumn(name="userId", referencedColumnName="userId"),
+        inverseJoinColumns=
+            @JoinColumn(name="id", referencedColumnName="ID")
+        )
+	public Set<Weapon> getWeapons() {
 		return weapons;
 	}
 
-	public void setWeapons(List<Weapon> weapons) {
+	public void setWeapons(Set<Weapon> weapons) {
 		this.weapons = weapons;
 	}
 	
